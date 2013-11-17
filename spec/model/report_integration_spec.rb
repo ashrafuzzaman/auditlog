@@ -8,7 +8,7 @@ describe 'Integration' do
       @task = Task.create!(title: 'Test')
       @task.update_attributes(title: 'Test 1', hours_estimated: 10, assigned_to_id: 1)
     end
-    subject { @task.reload.versions }
+    subject { @task.reload.versions.collect(&:version_changes).flatten.collect{ |ch| {field: ch.field, was: ch.was, now: ch.now} } }
 
     it 'generates version' do
       subject.should == nil
