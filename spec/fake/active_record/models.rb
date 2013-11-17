@@ -2,7 +2,9 @@ require 'fake/active_record/config'
 require 'auditlog/model_tracker'
 # models
 class User < ActiveRecord::Base
-  attr_accessible :email, :first_name, :last_name
+  include Auditlog::ModelTracker
+  track
+  attr_accessible :email, :name
 end
 
 class Task < ActiveRecord::Base
@@ -20,8 +22,7 @@ end
 class CreateAllTables < ActiveRecord::Migration
   def self.up
     create_table "users", :force => true do |t|
-      t.string "first_name"
-      t.string "last_name"
+      t.string "name"
       t.string "email"
     end
 
@@ -50,6 +51,7 @@ class CreateAllTables < ActiveRecord::Migration
       t.belongs_to :trackable, :polymorphic => true
       t.string :event, :null => false
       t.belongs_to :done_by
+      t.belongs_to :activity
       t.datetime :created_at
     end
 
