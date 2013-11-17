@@ -13,10 +13,9 @@ module Auditlog
 
       unless changes.empty?
         meta_attrs = Hash[(meta || {}).collect { |k, v| [k, v.is_a?(Symbol) ? model.send(v) : v.call(model)] }]
-        Rails.logger.debug "meta_attrs :: #{meta_attrs.inspect}"
 
         event = model.id_changed? ? 'create' : 'update'
-        version = Version.new({event: event})
+        version = Version.new(meta_attrs.merge(event: event))
         version.trackable = model
         changes.each do |field, changes|
           version.version_changes.build(field: field, was: changes[0], now: changes[1])
