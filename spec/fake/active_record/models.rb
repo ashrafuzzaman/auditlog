@@ -9,13 +9,17 @@ end
 
 class Task < ActiveRecord::Base
   include Auditlog::ModelTracker
-  track only: [:title, :hours_estimated, :assigned_to_id], except: [:id]
+  track only: [:title, :hours_estimated, :assigned_to_id], except: [:project_id], meta: [:project_id]
 
-  attr_accessible :title, :hours_estimated, :assigned_to_id
+  attr_accessible :title, :hours_estimated, :assigned_to_id, :project_id
 end
 
 class Story < ActiveRecord::Base
   attr_accessible :title, :assigned_to_id, :hours_estimated
+end
+
+class Project < ActiveRecord::Base
+  attr_accessible :title
 end
 
 #migrations
@@ -24,6 +28,10 @@ class CreateAllTables < ActiveRecord::Migration
     create_table "users", :force => true do |t|
       t.string "name"
       t.string "email"
+    end
+
+    create_table "projects", :force => true do |t|
+      t.string "title"
     end
 
     create_table "stories", :force => true do |t|
@@ -39,6 +47,7 @@ class CreateAllTables < ActiveRecord::Migration
       t.integer "story_id"
       t.integer "assigned_to_id"
       t.float "hours_estimated"
+      t.belongs_to :project
     end
 
     create_table :activities do |t|
@@ -52,6 +61,7 @@ class CreateAllTables < ActiveRecord::Migration
       t.string :event, :null => false
       t.belongs_to :done_by
       t.belongs_to :activity
+      t.belongs_to :project
       t.datetime :created_at
     end
 

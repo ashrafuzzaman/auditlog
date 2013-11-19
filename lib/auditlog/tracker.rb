@@ -12,10 +12,14 @@ module Auditlog
       changes = changes.delete_if { |attr, change| (change[0] == change[1]) or except.include?(attr.to_sym) }
 
       unless changes.empty?
-        meta_attrs = Hash[(meta || {}).collect { |k, v| [k, v.is_a?(Symbol) ? model.send(v) : v.call(model)] }]
-
         event = model.id_changed? ? 'create' : 'update'
-        version = Version.new(meta_attrs.merge(event: event))
+        version = Version.new(event: event)
+
+        meta.each do |meta_attr|
+          meta_value = model.send(meta_attr)
+          version.send("#{meta_attr.to_s}=", meta_value)
+        end if meta.present?
+
         version.trackable = model
         changes.each do |field, changes|
           version.version_changes.build(field: field, was: changes[0], now: changes[1])

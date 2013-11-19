@@ -9,7 +9,8 @@ describe 'Integration' do
       User.destroy_all
 
       @user = User.create!(name: 'Jitu')
-      @task = Task.create!(title: 'Test')
+      @project = Project.create!(title: 'Test')
+      @task = Task.create!(title: 'Test', project_id: @project.id)
       @task.update_attributes(title: 'Test 1', hours_estimated: 10, assigned_to_id: 1)
     end
 
