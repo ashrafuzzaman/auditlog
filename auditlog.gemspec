@@ -7,11 +7,11 @@ require "auditlog/version"
 Gem::Specification.new do |s|
   s.name        = "auditlog"
   s.version     = Auditlog::VERSION
-  s.authors     = ["TODO: Your name"]
-  s.email       = ["TODO: Your email"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of Auditlog."
-  s.description = "TODO: Description of Auditlog."
+  s.author      = "A.K.M. Ashrafuzzaman"
+  s.email       = ["ashrafuzzaman.g2@gmail.com"]
+  s.homepage    = "https://github.com/ashrafuzzaman/auditlog"
+  s.summary     = "Auditlog is ruby gem to track rails model changes"
+  s.description = "Rails gem to track active record model changes. Allows user to track action based model changes."
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["test/**/*"]
