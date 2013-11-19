@@ -13,18 +13,8 @@ module Auditlog
       end
     end
 
-    #def self.included(receiver)
-    #  receiver.extend ClassMethods
-    #end
-
     included do
       has_many :versions, as: :trackable
-
-      #scope :disabled, -> { where(disabled: true) }
     end
   end
 end
-
-#ActiveSupport.on_load(:active_record) do
-#  include AuditlogTracker
-#end
