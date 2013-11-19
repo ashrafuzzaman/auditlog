@@ -8,7 +8,6 @@ class Version < ActiveRecord::Base
   belongs_to :done_by, class_name: 'User'
   has_many :version_changes, dependent: :destroy
 
-  default_scope includes(:version_changes, :done_by)
   before_save :set_done_by_id
 
   private
