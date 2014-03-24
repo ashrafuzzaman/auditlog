@@ -1,3 +1,15 @@
 = Auditlog
 
 This project rocks and uses MIT-LICENSE.
+
+=
+
+Need to work with notification
+class Task < ActiveRecord::Base
+
+    attach_notification(:assign_to_me, [:assign_id]) do |task, current_user|
+        if task.user == current_user
+            notify task.user
+        end
+    end
+end
