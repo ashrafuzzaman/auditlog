@@ -42,5 +42,5 @@ en:
 UserNotification
 ================
 user_id
-changes_id
+version_change_id
 read_at
