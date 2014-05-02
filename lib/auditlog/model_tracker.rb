@@ -11,6 +11,20 @@ module Auditlog
           Auditlog::Tracker.track_changes(self, options)
         end
       end
+
+      def set_name_field(field)
+        @name_field = field
+
+        if field.to_sym != :name
+          define_method(:name) do
+            self.send field
+          end
+        end
+      end
+
+      def name_field
+        @name_field
+      end
     end
 
     included do
@@ -21,10 +35,7 @@ module Auditlog
       VersionChange.for(field: options[:field],
                         type: self.class.name.to_s,
                         id: self.id,
-                        events: options[:events]).order('created_at ASC')
+                        events: options[:events]).order('created_at DESC')
     end
-
-    #def readable_changes(version_changes)
-    #end
   end
 end

@@ -22,4 +22,35 @@ class VersionChange < ActiveRecord::Base
     version_changes
   end
 
+  def readable_message
+    version = self.version
+    klass_name = version.trackable_type.underscore
+    klass = version.trackable_type.constantize
+    field = self.field
+    reflection = klass.reflections.select { |association, relation| relation.foreign_key.to_sym == field.to_sym }
+
+    prefix = "auditlog.models.#{klass_name}.#{field}"
+    was, now = self.was, self.now
+    if reflection
+      was = readable_association_name(reflection, was)
+      now = readable_association_name(reflection, now)
+    end
+    params = {was: was, now: now}
+
+    if self.was.nil? || self.was.to_s == ''
+      I18n.t("#{prefix}.set", params)
+    elsif self.now.nil? || self.now.to_s == ''
+      I18n.t("#{prefix}.unset", params)
+    else
+      I18n.t("#{prefix}.changed", params)
+    end
+  end
+
+  private
+  def readable_association_name(reflection, value)
+    association_klass = reflection.values.first.class_name.to_s.constantize
+    name_field = association_klass.try(:name_field)
+    raise "Please set_name_field for the class #{association_klass_name}" if name_field.nil? || name_field == ''
+    association_klass.find(value).send(name_field) rescue nil if value.to_i > 0
+  end
 end
