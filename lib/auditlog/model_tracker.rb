@@ -12,18 +12,12 @@ module Auditlog
         end
       end
 
-      def set_name_field(field)
-        @name_field = field
-
-        if field.to_sym != :name
-          define_method(:name) do
-            self.send field
-          end
-        end
+      def auditlog_name_as(field)
+        @auditlog_name_method = field
       end
 
-      def name_field
-        @name_field
+      def auditlog_name_method
+        @auditlog_name_method
       end
     end
 

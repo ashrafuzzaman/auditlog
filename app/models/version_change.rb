@@ -49,8 +49,8 @@ class VersionChange < ActiveRecord::Base
   private
   def readable_association_name(reflection, value)
     association_klass = reflection.values.first.class_name.to_s.constantize
-    name_field = association_klass.try(:name_field)
-    raise "Please set_name_field for the class #{association_klass_name}" if name_field.nil? || name_field == ''
-    association_klass.find(value).send(name_field) rescue nil if value.to_i > 0
+    auditlog_name_method = association_klass.try(:auditlog_name_method)
+    raise "Please auditlog_name_as for the class #{association_klass_name}" if auditlog_name_method.nil? || auditlog_name_method == ''
+    association_klass.find(value).send(auditlog_name_method) rescue nil if value.to_i > 0
   end
 end
