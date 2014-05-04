@@ -13,3 +13,34 @@ class Task < ActiveRecord::Base
         end
     end
 end
+
+Changes render support
+
+1. For create the changes are shown in one sentance
+2. For update each changes are shown in seperate sentence
+    Translation keys:
+        -> nil to value
+        -> value to another value
+        -> value to nil
+3. For fields ends with _id, the model has to respond with a readable name
+4. Any changes can be notifuied to users.
+5. Notification and the history will render the same partial or use the same translation key.
+
+Sample translation file
+-----------------------
+en:
+  auditlog:
+    Default:
+      created: %{model} created
+    Task:
+      created: Task created
+      assigned_to_id:
+        cleared: Unassigned from %{assigned_to_was}
+        changed: Assigned from %{assigned_to_was} to %{assigned_to_now}
+        set: Assigned to %{assigned_to_now}
+
+UserNotification
+================
+user_id
+changes_id
+read_at

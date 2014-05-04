@@ -17,12 +17,12 @@ Gem::Specification.new do |s|
   s.test_files = Dir["test/**/*"]
 
   s.add_dependency "rails", ">= 3"
-  s.add_dependency "request_store"
+  s.add_dependency "request_store", '>= 1.0.5'
   s.license = 'MIT'
   # s.add_dependency "jquery-rails"
 
-  s.add_development_dependency 'rspec'
-  s.add_development_dependency 'rspec-mocks'
-  s.add_development_dependency 'sqlite3'
+  s.add_development_dependency 'rspec', '>= 2.14.1'
+  s.add_development_dependency 'rspec-mocks', '>= 2.14.6'
+  s.add_development_dependency 'sqlite3', '>= 1.3.9'
   s.add_development_dependency 'awesome_print'
 end
