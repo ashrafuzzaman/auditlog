@@ -17,4 +17,3 @@ guard :rspec do
   # Capybara features specs
   #watch(%r{^app/views/(.+)/.*\.(erb|haml|slim)$})     { |m| "spec/features/#{m[1]}_spec.rb" }
 end
-
