@@ -2,6 +2,7 @@ class VersionChange < ActiveRecord::Base
   attr_accessible :version_id, :field, :now, :was
 
   belongs_to :version
+  has_many :change_notifications, class_name: 'AuditlogChangeNotification'
 
   def self.for(options={})
     version_changes = VersionChange.includes(:version).joins(:version)
@@ -10,8 +11,10 @@ class VersionChange < ActiveRecord::Base
       fields = options[:field].kind_of?(Array) ? options[:field].collect(&:to_s) : options[:field].to_s
       version_changes = version_changes.where(field: fields)
     end
-    if options[:type] and options[:id]
-      version_changes = version_changes.where("versions.trackable_type = ? AND trackable_id IN (?)", options[:type].to_s, options[:id])
+    if options[:type] && options[:id]
+      version_changes = version_changes.joins("LEFT JOIN auditlog_change_notifications ON auditlog_change_notifications.version_change_id = version_changes.id").
+          where("(versions.trackable_type = :type AND trackable_id IN (:ids)) OR (auditlog_change_notifications.model_type = :type AND auditlog_change_notifications.model_id IN (:ids))",
+                type: options[:type].to_s, ids: options[:id])
     end
 
     events = options[:events]
@@ -30,19 +33,21 @@ class VersionChange < ActiveRecord::Base
     reflection = klass.reflections.select { |association, relation| relation.foreign_key.to_sym == field.to_sym }
 
     prefix = "auditlog.models.#{klass_name}.#{field}"
+    default_prefix = "auditlog.models.#{field}"
+
     was, now = self.was, self.now
-    if reflection
+    if reflection && !reflection.empty?
       was = readable_association_name(reflection, was)
       now = readable_association_name(reflection, now)
     end
     params = {was: was, now: now}
 
     if self.was.nil? || self.was.to_s == ''
-      I18n.t("#{prefix}.set", params)
+      I18n.t("#{prefix}.set", {default: ["#{default_prefix}.set".to_sym]}.merge(params))
     elsif self.now.nil? || self.now.to_s == ''
-      I18n.t("#{prefix}.unset", params)
+      I18n.t("#{prefix}.unset", {default: ["#{default_prefix}.unset".to_sym]}.merge(params))
     else
-      I18n.t("#{prefix}.changed", params)
+      I18n.t("#{prefix}.changed", {default: ["#{default_prefix}.changed".to_sym]}.merge(params))
     end
   end
 

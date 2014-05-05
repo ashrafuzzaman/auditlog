@@ -4,6 +4,7 @@ module Auditlog
       meta = options[:meta]
       column_names = model.class.column_names.collect { |col| col.to_sym }
       only = options[:only] || column_names
+      notify = options[:notify] || {}
       except = [:id, :updated_at, :created_at] + (options[:except] || [])
 
       except = (except + (column_names - only)).uniq
@@ -26,6 +27,29 @@ module Auditlog
         end
 
         version.save!
+        # now notify the dependencies notify
+        unless notify.empty?
+          notify.each do |relation, columns|
+            relation_ref = model.send relation
+            ap [relation_ref, relation_ref.class.name.to_s, relation_ref.id]
+
+            if relation_ref
+              notify_fields = []
+              changes.each do |field, changes|
+                notify_fields << field if columns.include?(field.to_sym)
+              end
+
+              changes_to_notify = version.version_changes.where(field: notify_fields)
+              changes_to_notify.each do |change_to_notify|
+                change_notification = change_to_notify.change_notifications.build
+                change_notification.model = relation_ref
+                change_notification.save!
+              end
+            end
+          end
+        end
+
+        version
       end
     end
   end
