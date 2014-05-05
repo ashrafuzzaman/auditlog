@@ -1,8 +1,6 @@
 require 'auditlog/data'
 
 class Version < ActiveRecord::Base
-  attr_accessible :event, :done_by_id, :object
-
   belongs_to :activity
   belongs_to :trackable, polymorphic: true
   belongs_to :done_by, class_name: 'User'

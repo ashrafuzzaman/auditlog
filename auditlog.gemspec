@@ -21,8 +21,11 @@ Gem::Specification.new do |s|
   s.license = 'MIT'
   # s.add_dependency "jquery-rails"
 
-  s.add_development_dependency 'rspec', '>= 2.14.1'
-  s.add_development_dependency 'rspec-mocks', '>= 2.14.6'
-  s.add_development_dependency 'sqlite3', '>= 1.3.9'
-  s.add_development_dependency 'awesome_print'
+  s.add_development_dependency 'sqlite3'
+  s.add_development_dependency 'rake', ['>= 0']
+  s.add_development_dependency 'rspec', ['>= 0']
+  s.add_development_dependency 'rspec-rails', ['>= 0']
+  s.add_development_dependency 'shoulda-matchers'
+  s.add_development_dependency 'guard-rspec'
+  s.add_development_dependency 'database_cleaner', ['>= 1.2.0']
 end

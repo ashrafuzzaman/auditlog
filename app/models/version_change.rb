@@ -1,6 +1,4 @@
 class VersionChange < ActiveRecord::Base
-  attr_accessible :version_id, :field, :now, :was
-
   belongs_to :version
   has_many :change_notifications, class_name: 'AuditlogChangeNotification'
 
