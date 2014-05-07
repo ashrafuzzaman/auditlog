@@ -11,6 +11,7 @@ require 'active_record'
 require 'rails_app/application'
 require 'rspec/rails'
 require 'shoulda/matchers'
+require 'shoulda-callback-matchers'
 
 autoload :ReservationCommissionReceivable, 'commission/app/models/reservation_commission_receivable'
 

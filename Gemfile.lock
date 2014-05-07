@@ -109,6 +109,8 @@ GEM
       rspec-core (~> 2.14.0)
       rspec-expectations (~> 2.14.0)
       rspec-mocks (~> 2.14.0)
+    shoulda-callback-matchers (1.0.0)
+      activesupport (>= 3)
     shoulda-matchers (2.2.0)
       activesupport (>= 3.0.0)
     slop (3.4.7)
@@ -140,7 +142,7 @@ DEPENDENCIES
   guard-rspec
   jquery-rails
   rake
-  rspec
   rspec-rails
+  shoulda-callback-matchers
   shoulda-matchers
   sqlite3
