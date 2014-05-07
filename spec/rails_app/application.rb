@@ -2,7 +2,7 @@
 require 'action_controller/railtie'
 require 'action_view/railtie'
 
-require 'fake_app/active_record/config' if defined? ActiveRecord
+require 'rails_app/active_record/config' if defined? ActiveRecord
 # config
 app = Class.new(Rails::Application)
 app.config.secret_token = '3b7cd727ee24e8444053437c36cc66c4'
@@ -20,7 +20,7 @@ app.routes.draw do
 end
 
 #models
-require 'fake_app/active_record/models' if defined? ActiveRecord
+require 'rails_app/active_record/models' if defined? ActiveRecord
 
 # controllers
 class ApplicationController < ActionController::Base; end

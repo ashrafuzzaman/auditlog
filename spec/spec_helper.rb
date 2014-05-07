@@ -8,7 +8,7 @@ Bundler.require
 #require 'capybara/rspec'
 require 'database_cleaner'
 require 'active_record'
-require 'fake_app/rails_app'
+require 'rails_app/application'
 require 'rspec/rails'
 require 'shoulda/matchers'
 

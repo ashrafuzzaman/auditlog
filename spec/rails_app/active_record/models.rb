@@ -1,4 +1,5 @@
-# models
+# String to symbol regex "(.*)" ==> :$1
+
 class User < ActiveRecord::Base
   has_many :authorships
   has_many :readerships
@@ -49,7 +50,6 @@ end
 #migrations
 class CreateAllTables < ActiveRecord::Migration
   def self.up
-    create_table(:gem_defined_models) { |t| t.string :name; t.integer :age }
     create_table(:users) { |t| t.string :name; t.integer :age; t.datetime :dob; t.timestamps }
     create_table(:books) { |t| t.string :title }
     create_table(:readerships) { |t| t.integer :user_id; t.integer :book_id }
@@ -79,6 +79,33 @@ class CreateAllTables < ActiveRecord::Migration
       t.references :hotel
 
       t.timestamps
+    end
+
+    create_table :activities do |t|
+      t.belongs_to :done_by
+      t.string :name
+      t.datetime :created_at
+    end
+
+    create_table :versions do |t|
+      t.belongs_to :trackable, :polymorphic => true
+      t.string :event, :null => false
+      t.belongs_to :activity
+      t.belongs_to :done_by
+      t.belongs_to :project
+      t.datetime :created_at
+    end
+
+    create_table :version_changes do |t|
+      t.belongs_to :version
+      t.string :field, :null => false
+      t.string :was
+      t.string :now
+    end
+
+    create_table :auditlog_change_notifications do |t|
+      t.references :model, :polymorphic => true
+      t.references :version, :null => false
     end
   end
 end
