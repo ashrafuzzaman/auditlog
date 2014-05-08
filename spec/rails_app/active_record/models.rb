@@ -1,29 +1,43 @@
 # String to symbol regex :(.*) ==> :$1
+require 'auditlog/model_tracker'
 
 class User < ActiveRecord::Base
+  include Auditlog::ModelTracker
+  track only: [:first_name, :last_name]
 end
 
 class WorkflowStatus < ActiveRecord::Base
+  include Auditlog::ModelTracker
+end
+
+class Project < ActiveRecord::Base
 end
 
 class Story < ActiveRecord::Base
+  include Auditlog::ModelTracker
   has_many :tasks
   belongs_to :workflow_status
+  belongs_to :project
   belongs_to :assigned_to, :class_name => "User", :foreign_key => "assigned_to_id"
 end
 
 class Task < ActiveRecord::Base
+  include Auditlog::ModelTracker
   belongs_to :story
   belongs_to :workflow_status
   belongs_to :assigned_to, :class_name => "User", :foreign_key => "assigned_to_id"
+
+  track only: [:title, :status, :hours_estimated, :assigned_to_id, :workflow_status_id], meta: [:project_id]
 end
 
 class Comment < ActiveRecord::Base
+  include Auditlog::ModelTracker
   belongs_to :user
   belongs_to :commentable, :polymorphic => true
 end
 
 class Comment < ActiveRecord::Base
+  include Auditlog::ModelTracker
   belongs_to :user
   belongs_to :commentable, :polymorphic => true
 end
@@ -34,6 +48,10 @@ class CreateAllTables < ActiveRecord::Migration
     create_table :users do |t|
       t.string :first_name
       t.string :last_name
+    end
+
+    create_table :projects, force: true do |t|
+      t.string   :name
     end
 
     create_table :stories do |t|
