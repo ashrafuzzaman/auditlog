@@ -1,84 +1,64 @@
-# String to symbol regex "(.*)" ==> :$1
+# String to symbol regex :(.*) ==> :$1
 
 class User < ActiveRecord::Base
-  has_many :authorships
-  has_many :readerships
-  has_many :books_authored, :through => :authorships, :source => :book
-  has_many :books_read, :through => :readerships, :source => :book
-  has_many :addresses, :class_name => 'User::Address'
-
-  #attr_accessible :name, :age, :dob
-
-  def readers
-    User.joins(:books_read => :authors).where(:authors_books => {:id => self})
-  end
-
-  scope :by_name, order(:name)
-  scope :by_read_count, lambda {
-    cols = if connection.adapter_name == "PostgreSQL"
-             column_names.map { |column| %{"users"."#{column}"} }.join(", ")
-           else
-             '"users"."id"'
-           end
-    group(cols).select("count(readerships.id) AS read_count, #{cols}").order('read_count DESC')
-  }
 end
-class Authorship < ActiveRecord::Base
+
+class WorkflowStatus < ActiveRecord::Base
+end
+
+class Story < ActiveRecord::Base
+  has_many :tasks
+  belongs_to :workflow_status
+  belongs_to :assigned_to, :class_name => "User", :foreign_key => "assigned_to_id"
+end
+
+class Task < ActiveRecord::Base
+  belongs_to :story
+  belongs_to :workflow_status
+  belongs_to :assigned_to, :class_name => "User", :foreign_key => "assigned_to_id"
+end
+
+class Comment < ActiveRecord::Base
   belongs_to :user
-  belongs_to :book
+  belongs_to :commentable, :polymorphic => true
 end
-class Readership < ActiveRecord::Base
-  belongs_to :user
-  belongs_to :book
 
-  #attr_accessible :user_id, :book_id
-end
-class Book < ActiveRecord::Base
-  has_many :authorships
-  has_many :readerships
-  has_many :authors, :through => :authorships, :source => :user
-  has_many :readers, :through => :readerships, :source => :user
-end
-# a model that is a descendant of AR::Base but doesn't directly inherit AR::Base
-class Admin < User
-end
-# a model with namespace
-class User::Address < ActiveRecord::Base
+class Comment < ActiveRecord::Base
   belongs_to :user
+  belongs_to :commentable, :polymorphic => true
 end
 
 #migrations
 class CreateAllTables < ActiveRecord::Migration
   def self.up
-    create_table(:users) { |t| t.string :name; t.integer :age; t.datetime :dob; t.timestamps }
-    create_table(:books) { |t| t.string :title }
-    create_table(:readerships) { |t| t.integer :user_id; t.integer :book_id }
-    create_table(:authorships) { |t| t.integer :user_id; t.integer :book_id }
-    create_table(:user_addresses) { |t| t.string :street; t.integer :user_id }
-
-    create_table :reservation_commission_receivables do |t|
-      t.string :type
-      t.datetime :start_date
-      t.datetime :end_date
-      t.references :check_in
-      t.references :hotel
-      t.references :invoice
-      t.float :room_charge
-      t.float :amount
-
-      t.timestamps
+    create_table :users do |t|
+      t.string :first_name
+      t.string :last_name
     end
 
-    create_table :reservation_commission_invoices do |t|
-      t.string :type
+    create_table :stories do |t|
       t.string :title
-      t.float :total_room_charge
-      t.float :total_amount
-      t.string :status
-      t.datetime :invoiced_at
-      t.references :hotel
+      t.integer :assigned_to_id
+      t.date :deadline
+      t.integer :workflow_status_id
+    end
 
-      t.timestamps
+    create_table :tasks do |t|
+      t.string :title
+      t.integer :story_id
+      t.integer :assigned_to_id
+      t.integer :workflow_status_id
+    end
+
+    create_table :comments do |t|
+      t.text :text
+      t.integer :user_id
+      t.integer :commentable_id
+      t.string :commentable_type
+    end
+
+    create_table :workflow_statuses do |t|
+      t.string :title
     end
 
     create_table :activities do |t|
