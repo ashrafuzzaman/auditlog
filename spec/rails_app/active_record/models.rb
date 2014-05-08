@@ -1,20 +1,15 @@
 # String to symbol regex :(.*) ==> :$1
-require 'auditlog/model_tracker'
-
 class User < ActiveRecord::Base
-  include Auditlog::ModelTracker
   track only: [:first_name, :last_name]
 end
 
 class WorkflowStatus < ActiveRecord::Base
-  include Auditlog::ModelTracker
 end
 
 class Project < ActiveRecord::Base
 end
 
 class Story < ActiveRecord::Base
-  include Auditlog::ModelTracker
   has_many :tasks
   belongs_to :workflow_status
   belongs_to :project
@@ -22,7 +17,6 @@ class Story < ActiveRecord::Base
 end
 
 class Task < ActiveRecord::Base
-  include Auditlog::ModelTracker
   belongs_to :story
   belongs_to :workflow_status
   belongs_to :assigned_to, :class_name => "User", :foreign_key => "assigned_to_id"
@@ -31,13 +25,11 @@ class Task < ActiveRecord::Base
 end
 
 class Comment < ActiveRecord::Base
-  include Auditlog::ModelTracker
   belongs_to :user
   belongs_to :commentable, :polymorphic => true
 end
 
 class Comment < ActiveRecord::Base
-  include Auditlog::ModelTracker
   belongs_to :user
   belongs_to :commentable, :polymorphic => true
 end
