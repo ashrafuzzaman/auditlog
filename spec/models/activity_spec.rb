@@ -1,20 +1,19 @@
 require 'spec_helper'
 
-describe Version do
+describe Activity do
   context 'relationships' do
-    it { should belong_to(:activity) }
-    it { should belong_to(:trackable) }
-    it { should have_many(:version_changes) }
+    it { should belong_to(:done_by) }
+    it { should have_many(:versions) }
     it { should callback(:set_done_by_id).before(:save) }
   end
 
   describe '.set_done_by_id' do
     before do
       Auditlog::Data.stub(:current_user_id) { 1 }
-      @version = Version.new
-      @version.send(:set_done_by_id)
+      @activity = Activity.new
+      @activity.send(:set_done_by_id)
     end
-    subject { @version }
+    subject { @activity }
     its(:done_by_id) { should eq 1 }
   end
 end
