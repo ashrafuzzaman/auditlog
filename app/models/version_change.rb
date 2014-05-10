@@ -23,15 +23,21 @@ class VersionChange < ActiveRecord::Base
     version_changes
   end
 
-  def readable_message
-    version = self.version
-    klass_name = version.trackable_type.underscore
-    klass = version.trackable_type.constantize
-    field = self.field
-    reflection = klass.reflections.select { |association, relation| relation.foreign_key.to_sym == field.to_sym }
+  def table_name
+    @table_name ||= version.trackable_type.underscore
+  end
 
-    prefix = "auditlog.models.#{klass_name}.#{field}"
-    default_prefix = "auditlog.models.#{field}"
+  def i18n_prefix
+    @i18n_prefix ||= "auditlog.models.#{table_name}.#{field}"
+  end
+
+  def i18n_default_prefix
+    @default_prefix ||= "auditlog.models.#{field}"
+  end
+
+  def readable_message
+    klass = version.trackable_type.constantize
+    reflection = klass.reflections.select { |association, relation| relation.foreign_key.to_sym == field.to_sym }
 
     was, now = self.was, self.now
     if reflection && !reflection.empty?
@@ -41,19 +47,23 @@ class VersionChange < ActiveRecord::Base
     params = {was: was, now: now}
 
     if self.was.nil? || self.was.to_s == ''
-      I18n.t("#{prefix}.set", {default: ["#{default_prefix}.set".to_sym]}.merge(params))
+      i18n_message(:set, params)
     elsif self.now.nil? || self.now.to_s == ''
-      I18n.t("#{prefix}.unset", {default: ["#{default_prefix}.unset".to_sym]}.merge(params))
+      i18n_message(:unset, params)
     else
-      I18n.t("#{prefix}.changed", {default: ["#{default_prefix}.changed".to_sym]}.merge(params))
+      i18n_message(:changed, params)
     end
   end
 
   private
-  def readable_association_name(reflection, value)
+  def readable_association_name(reflection, id)
     association_klass = reflection.values.first.class_name.to_s.constantize
     auditlog_name_method = association_klass.try(:auditlog_name_method)
     raise "Please auditlog_name_as for the class #{association_klass_name}" if auditlog_name_method.nil? || auditlog_name_method == ''
-    association_klass.find(value).send(auditlog_name_method) rescue nil if value.to_i > 0
+    association_klass.find(id).send(auditlog_name_method) rescue nil if id.to_i > 0
+  end
+
+  def i18n_message(type, params)
+    I18n.t("#{i18n_prefix}.#{type.to_s}", {default: ["#{i18n_default_prefix}.#{type.to_s}".to_sym]}.merge(params))
   end
 end
