@@ -1,12 +1,18 @@
 # String to symbol regex :(.*) ==> :$1
 class User < ActiveRecord::Base
   track only: [:first_name, :last_name]
+
+  def name
+    "#{first_name} #{last_name}"
+  end
 end
 
 class WorkflowStatus < ActiveRecord::Base
+  track only: [:title]
 end
 
 class Project < ActiveRecord::Base
+  track only: [:title]
 end
 
 class Story < ActiveRecord::Base
@@ -14,6 +20,7 @@ class Story < ActiveRecord::Base
   belongs_to :workflow_status
   belongs_to :project
   belongs_to :assigned_to, :class_name => "User", :foreign_key => "assigned_to_id"
+  track only: [:title, :status, :workflow_status_id], meta: [:project_id]
 end
 
 class Task < ActiveRecord::Base
@@ -43,7 +50,7 @@ class CreateAllTables < ActiveRecord::Migration
     end
 
     create_table :projects, force: true do |t|
-      t.string   :name
+      t.string :name
     end
 
     create_table :stories do |t|

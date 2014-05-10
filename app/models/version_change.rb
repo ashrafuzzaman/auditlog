@@ -39,12 +39,12 @@ class VersionChange < ActiveRecord::Base
     klass = version.trackable_type.constantize
     reflection = klass.reflections.select { |association, relation| relation.foreign_key.to_sym == field.to_sym }
 
-    was, now = self.was, self.now
+    field_was, field_now = self.was, self.now
     if reflection && !reflection.empty?
-      was = readable_association_name(reflection, was)
-      now = readable_association_name(reflection, now)
+      field_was = readable_association_name(reflection, field_was)
+      field_now = readable_association_name(reflection, field_now)
     end
-    params = {was: was, now: now}
+    params = {was: field_was, now: field_now}
 
     if self.was.nil? || self.was.to_s == ''
       i18n_message(:set, params)
@@ -64,6 +64,6 @@ class VersionChange < ActiveRecord::Base
   end
 
   def i18n_message(type, params)
-    I18n.t("#{i18n_prefix}.#{type.to_s}", {default: ["#{i18n_default_prefix}.#{type.to_s}".to_sym]}.merge(params))
+    I18n.t(:"#{i18n_prefix}.#{type.to_s}", {default: ["#{i18n_default_prefix}.#{type.to_s}".to_sym]}.merge(params))
   end
 end
