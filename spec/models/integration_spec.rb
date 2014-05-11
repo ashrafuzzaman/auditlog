@@ -19,6 +19,5 @@ describe VersionChange do
       p @story1.versions
       p @story1.version_changes.inspect
     end
-
   end
 end

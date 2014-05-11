@@ -17,9 +17,7 @@ class Project < ActiveRecord::Base
 end
 
 class Story < ActiveRecord::Base
-  include Auditlog::ModelTracker
   has_many :tasks
-  #has_many :versions, as: :trackable
   belongs_to :workflow_status
   belongs_to :project
   belongs_to :assigned_to, :class_name => "User", :foreign_key => "assigned_to_id"
