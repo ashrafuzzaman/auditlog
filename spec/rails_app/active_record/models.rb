@@ -12,6 +12,7 @@ class WorkflowStatus < ActiveRecord::Base
 end
 
 class Project < ActiveRecord::Base
+  has_many :stories
   track only: [:title]
 end
 
@@ -50,23 +51,24 @@ class CreateAllTables < ActiveRecord::Migration
 
     create_table :stories do |t|
       t.string :title
-      t.integer :assigned_to_id
       t.date :deadline
-      t.integer :workflow_status_id
+      t.belongs_to :assigned_to
+      t.belongs_to :workflow_status
+      t.belongs_to :project
     end
 
     create_table :tasks do |t|
       t.string :title
-      t.integer :story_id
-      t.integer :assigned_to_id
-      t.integer :workflow_status_id
+      t.belongs_to :story
+      t.belongs_to :assigned_to
+      t.belongs_to :workflow_status
+      t.belongs_to :project
     end
 
     create_table :comments do |t|
       t.text :text
       t.integer :user_id
-      t.integer :commentable_id
-      t.string :commentable_type
+      t.belongs_to :commentable, :polymorphic => true
     end
 
     create_table :workflow_statuses do |t|

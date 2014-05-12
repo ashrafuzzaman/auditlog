@@ -7,6 +7,12 @@ module Auditlog
 
     module ClassMethods
       def track(options = {})
+        if ::ActiveRecord::VERSION::MAJOR >= 4 # `has_many` syntax for specifying order uses a lambda in Rails 4
+          has_many :versions, -> { order('created_at DESC') }, as: :trackable
+        else
+          has_many :versions, as: :trackable, order: 'created_at DESC'
+        end
+
         self.after_save do
           Auditlog::Tracker.track_changes(self, options)
         end
@@ -19,10 +25,6 @@ module Auditlog
       def auditlog_name_method
         @auditlog_name_method
       end
-    end
-
-    included do
-      has_many :versions, as: :trackable
     end
 
     def version_changes(options={})
