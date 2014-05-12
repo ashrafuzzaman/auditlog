@@ -36,11 +36,6 @@ class Comment < ActiveRecord::Base
   belongs_to :commentable, :polymorphic => true
 end
 
-class Comment < ActiveRecord::Base
-  belongs_to :user
-  belongs_to :commentable, :polymorphic => true
-end
-
 #migrations
 class CreateAllTables < ActiveRecord::Migration
   def self.up
