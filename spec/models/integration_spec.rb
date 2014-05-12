@@ -18,6 +18,7 @@ describe VersionChange do
     end
 
     it 'tracks the changes on create' do
+      p @story1.versions.inspect.all
       expect(@story1.versions.count).to be 1
 
       story1_version = @story1.versions.last
