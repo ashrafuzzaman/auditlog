@@ -9,6 +9,7 @@ end
 
 class WorkflowStatus < ActiveRecord::Base
   track only: [:title]
+  auditlog_name_as :title
 end
 
 class Project < ActiveRecord::Base
