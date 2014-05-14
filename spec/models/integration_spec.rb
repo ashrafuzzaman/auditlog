@@ -19,7 +19,7 @@ describe VersionChange do
     end
 
     it 'tracks the changes on create' do
-      #expect(@story1.versions.count).to be 1
+      expect(@story1.versions.count).to be 1
 
       story1_version = @story1.versions.last
       expect(story1_version.event).to eq 'create'
