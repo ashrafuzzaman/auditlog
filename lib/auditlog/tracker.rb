@@ -31,7 +31,6 @@ module Auditlog
         unless notify.empty?
           notify.each do |relation, columns|
             relation_ref = model.send relation
-            ap [relation_ref, relation_ref.class.name.to_s, relation_ref.id]
 
             if relation_ref
               notify_fields = []
